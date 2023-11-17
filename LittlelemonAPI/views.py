@@ -24,7 +24,7 @@ def menu_item(request):
 
 
 @api_view(['GET', 'POST'])
-def single_item(request, pk):
-    item = get_object_or_404(MenuItem, pk=pk)
+def single_item(request, id):
+    item = get_object_or_404(MenuItem, pk=id)
     serialized_item = MenuItemSerializer(item)
     return Response(serialized_item.data)
