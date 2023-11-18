@@ -10,6 +10,7 @@ djangorestframework-xml = "*"
 djoser = "*"
 black = "*"
 bleach = "*"
+django-filter = "*"
 
 [dev-packages]
 
