@@ -4,6 +4,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage
 from rest_framework import viewsets 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 from .models import MenuItem
 from .serializers import MenuItemSerializer
@@ -59,3 +61,9 @@ class MenuItemsViewSet(viewsets.ModelViewSet):
     ordering_fields = ['price', 'inventory']
     # Search field field name = title , category = title
     search_fields = ['title', 'category__title']
+
+
+@api_view()
+@permission_classes([IsAuthenticated]) # Secret message only for authenticated user
+def secret(request):
+    return Response({"message":"Some secret message"})

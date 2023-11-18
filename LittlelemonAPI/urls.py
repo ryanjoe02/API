@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from . import views
 
@@ -9,4 +10,7 @@ urlpatterns = [
     # only map the GET methods
     path('menu-items',views.MenuItemsViewSet.as_view({'get':'list'})),
     path('menu-items/<int:pk>',views.MenuItemsViewSet.as_view({'get':'retrieve'})),
+    path('secret/', views.secret),
+    # Only accept POST, 
+    path('api-token-auth/', obtain_auth_token),
 ]
