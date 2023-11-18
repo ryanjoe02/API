@@ -9,6 +9,7 @@ djangorestframework = "*"
 djangorestframework-xml = "*"
 djoser = "*"
 black = "*"
+bleach = "*"
 
 [dev-packages]
 
