@@ -55,3 +55,6 @@ def single_item(request, id):
 class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+    # Ordering & Sorting
+    ordering_fields = ['price', 'inventory']
+    
