@@ -16,6 +16,3 @@ class MenuItem(models.Model):
     inventory = models.SmallIntegerField()
     # category cannot be deleted before all the related menu items are deleted
     category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
-
-    def __str__(self):
-        return f"{self.title}"
