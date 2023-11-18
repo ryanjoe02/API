@@ -38,7 +38,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             "price": {"min_value": 2},
-            "stock": {"source": "inventory", "min_value": 0}
+            "stock": {"source": "inventory", "min_value": 0},
         }
 
     def calculate_tax(self, product: MenuItem):
