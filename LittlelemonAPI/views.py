@@ -57,4 +57,5 @@ class MenuItemsViewSet(viewsets.ModelViewSet):
     serializer_class = MenuItemSerializer
     # Ordering & Sorting
     ordering_fields = ['price', 'inventory']
-    
+    # Search field field name = title , category = title
+    search_fields = ['title', 'category__title']
