@@ -5,10 +5,12 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage
 from rest_framework import viewsets 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, throttle_classes
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 from .models import MenuItem
 from .serializers import MenuItemSerializer
+from .throttles import TenCallsPerMinute
 
 
 # /api/menu-item/ : display the menu items that you've set in serializers.py as JSON data
@@ -67,3 +69,25 @@ class MenuItemsViewSet(viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated]) # Secret message only for authenticated user
 def secret(request):
     return Response({"message":"Some secret message"})
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def manager_view(request):
+    if request.user.groups.filter(name="Manager").exists():
+        return Response({"message":"Only Manager Should See This"})
+    else:
+        return Response({"message":"You are not Manager"}, status.HTTP_403_FORBIDDEN)
+    
+
+@api_view()
+@throttle_classes([AnonRateThrottle])
+def throttle_check(request):
+    return Response({"message": "successful"})
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+@throttle_classes([TenCallsPerMinute])
+def throttle_check_auth(request):
+    return Response({"message": "message for the logged in user only"})
