@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage
-from rest_framework import viewsets 
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes, throttle_classes
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
@@ -55,30 +55,40 @@ def single_item(request, id):
     serialized_item = MenuItemSerializer(item)
     return Response(serialized_item.data)
 
+
 # Class-Based views
 class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     # Ordering & Sorting
-    ordering_fields = ['price', 'inventory']
+    ordering_fields = ["price", "inventory"]
     # Search field field name = title , category = title
-    search_fields = ['title', 'category__title']
+    search_fields = ["title", "category__title"]
+    # throttling for CBVs, Endpoints will be throttled for both anon and authenticated user
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
+    def get_throttles(self):
+        if self.action == "create":
+            throttle_classes = [UserRateThrottle]
+        else:
+            throttle_classes = []
+        return [throttle_classes() for throttle in throttle_classes]
 
 
 @api_view()
-@permission_classes([IsAuthenticated]) # Secret message only for authenticated user
+@permission_classes([IsAuthenticated])  # Secret message only for authenticated user
 def secret(request):
-    return Response({"message":"Some secret message"})
+    return Response({"message": "Some secret message"})
 
 
 @api_view()
 @permission_classes([IsAuthenticated])
 def manager_view(request):
     if request.user.groups.filter(name="Manager").exists():
-        return Response({"message":"Only Manager Should See This"})
+        return Response({"message": "Only Manager Should See This"})
     else:
-        return Response({"message":"You are not Manager"}, status.HTTP_403_FORBIDDEN)
-    
+        return Response({"message": "You are not Manager"}, status.HTTP_403_FORBIDDEN)
+
 
 @api_view()
 @throttle_classes([AnonRateThrottle])
