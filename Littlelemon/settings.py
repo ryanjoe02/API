@@ -50,6 +50,8 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "djoser", # after the rest_framework package
 ]
 
 MIDDLEWARE = [
@@ -148,7 +150,10 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        # login django admin with Djoser, add SessionAuth
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_THROTTLE_RATES": {
         "anon": "20/day",
@@ -156,4 +161,8 @@ REST_FRAMEWORK = {
         # from throttles.py
         "ten": "10/minute",
     },
+}
+
+DJOSER = {
+    "USER_ID_FIELD": "username"
 }
