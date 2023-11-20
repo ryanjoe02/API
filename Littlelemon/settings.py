@@ -53,7 +53,7 @@ INSTALLED_APPS += [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
-    "djoser", # after the rest_framework package
+    "djoser",  # after the rest_framework package
 ]
 
 MIDDLEWARE = [
@@ -165,10 +165,8 @@ REST_FRAMEWORK = {
     },
 }
 
-DJOSER = {
-    "USER_ID_FIELD": "username"
-}
+DJOSER = {"USER_ID_FIELD": "username"}
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
 }
