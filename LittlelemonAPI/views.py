@@ -7,6 +7,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes, throttle_classes
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth.models import User, Group
 
 from .models import MenuItem
 from .serializers import MenuItemSerializer
@@ -101,3 +103,20 @@ def throttle_check(request):
 @throttle_classes([TenCallsPerMinute])
 def throttle_check_auth(request):
     return Response({"message": "message for the logged in user only"})
+
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def managers(request):
+    username = request.data["username"]
+    if username:
+        user = get_object_or_404(User, username=username)
+        managers = Group.objects.get(name="Manager")
+        if request.method == "POST":
+            managers.user_set.add(user)
+        elif request.method == "DELETE":
+            managers.user_set.remove(user)
+
+        return Response({"message": "ok"})
+
+    return Response({"message": "error"}, status.HTTP_400_BAD_REQUEST)
