@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 # apps
 INSTALLED_APPS += [
     "LittlelemonAPI",
-    "LittlelemonProject",
+    "LittlelemonDRF",
 ]
 
 # Package
