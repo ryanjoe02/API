@@ -14,9 +14,9 @@ class Category(models.Model):
 class MenuItem(models.Model):
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    inventory = models.SmallIntegerField()
+    featured = models.BooleanField(db_index=True)
     # category cannot be deleted before all the related menu items are deleted
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
 
 class Cart(models.Model):
