@@ -1,15 +1,14 @@
-from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
+from django.urls import path, include
+# from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework import routers
 
-from . import views
+from .views import CategoryViewSet, MenuItemViewSet
+
+
+router = routers.DefaultRouter()
+router.register("categories", CategoryViewSet)
+router.register("menu-items", MenuItemViewSet)
 
 urlpatterns = [
-    path(
-        "menu-items/", views.MenuItemViewSet.as_view({"get": "list", "post": "create"})
-    ),
-    path(
-        "menu-items/<int:pk>/",
-        views.SingleMenuItemViewSet.as_view(),
-        name="single-menu-item",
-    ),
+    path("", include(router.urls)),
 ]
