@@ -4,11 +4,18 @@ from django.contrib.auth.models import User, Group
 
 from .models import MenuItem
 
+
 class MenuItemTestCase(APITestCase):
     def set(self):
-        self.customer_user = User.objects.create_user(username="customer", password="test1234!")
-        self.delivery_user = User.objects.create_user(username="delivery", password="test1234!")
-        self.manager_user = User.objects.create_user(username="manager", password="test1234!")
+        self.customer_user = User.objects.create_user(
+            username="customer", password="test1234!"
+        )
+        self.delivery_user = User.objects.create_user(
+            username="delivery", password="test1234!"
+        )
+        self.manager_user = User.objects.create_user(
+            username="manager", password="test1234!"
+        )
 
         self.manager_group = Group.objects.create(name="Manager")
         self.delivery_group = Group.objects.create(name="DeliveryCrew")
@@ -34,5 +41,3 @@ class MenuItemTestCase(APITestCase):
         update_item = MenuItem.objects.get(id=item_id)
         self.assertEqual(update_item.name, update_data["name"])
         self.assertEqual(update_item.price, update_data["price"])
-
-

@@ -1,44 +1,31 @@
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets
+from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from .models import MenuItem
-from .serializers import MenuItemSerializer
-from rest_framework.response import Response
+from .models import MenuItem, Category
+from .serializers import MenuItemSerializer, CategorySerializer
+from .filters import MenuItemFilter
+from .paginations import MenuItemPagnation
 
 
-# /menu-items
-class CustomerReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.groups.filter(name='Customer').exists()
-        return False
 
-class DeliveryReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.groups.filter(name="DeliveryCrew").exists()
-        return False
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser, DjangoModelPermissions]
+    # throttle_classes = [UserRateThrottle, AnonRateThrottle]
+
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    ordering_field = ["price"]
-
-    def get_permissions(self):
-        user = self.request.user
-
-        if user.groups.filter(name="Manager").exists():
-            permission_classes = [permissions.AllowAny]
-        elif user.groups.filter(name="Customer").exists():
-            permission_classes = [CustomerReadOnly]
-        elif user.groups.filter(name="DeliveryCrew").exists():
-            permission_classes = [DeliveryReadOnly]
-        else:
-            permission_classes = [permissions.IsAuthenticated]
-
-        return [permission() for permission in permission_classes]
-
-
-class SingleMenuItemViewSet(generics.RetrieveAPIView):
-    queryset = MenuItem.objects.all()
-    serializer_class = MenuItemSerializer
-    lookup_field = "pk"
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = MenuItemFilter
+    search_fields = ['title', 'category__title']
+    ordering_fields = ['price', "featured", "category"]
+    pagination_class = MenuItemPagnation
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
