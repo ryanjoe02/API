@@ -19,5 +19,5 @@ class OrderFilter(FilterSet):
             "delivery_crew_id": ["exact"],
             "status" : ["exact"],
             "total": ["gte", "lte"],
-            "date": ["year__gte, year__lte"],
+            "date": ["year__gte", "year__lte"],
         }
