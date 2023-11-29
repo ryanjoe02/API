@@ -9,14 +9,16 @@ from rest_framework.response import Response
 class CustomerReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
-            return request.user.groups.filter(name='Customer').exists()
+            return request.user.groups.filter(name="Customer").exists()
         return False
+
 
 class DeliveryReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return request.user.groups.filter(name="DeliveryCrew").exists()
         return False
+
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
