@@ -144,7 +144,9 @@ def manager(request):
             return Response({"message": "Manager removed successfully"}, status.HTTP_200_OK)
     return Response({"message": "Invalid request"}, status.HTTP_400_BAD_REQUEST)
 
-
+@api_view(["GET", "POST", "DELETE"])
+@permission_classes([IsAdminUser])
+@throttle_classes([UserRateThrottle, AnonRateThrottle])
 def delivery_crew(request):
     delivery_crews = Group.objects.get(name="DeliveryCrew")
     if request.method == "GET":
