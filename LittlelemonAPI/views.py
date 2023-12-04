@@ -9,7 +9,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
-
+from django.contrib.auth.models import Group, User
 
 from .models import MenuItem, Category, Cart, Order
 from .serializers import (
@@ -25,6 +25,8 @@ from .serializers import (
 )
 from .filters import MenuItemFilter, OrderFilter
 from .paginations import MenuItemPagnation
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -116,3 +118,46 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = serializer.save()
         serializer = SimpleOrderSerializer(order)
         return Response(serializer.data)
+
+
+@api_view(["GET", "POST", "DELETE"])
+@permission_classes([IsAdminUser])
+@throttle_classes([UserRateThrottle, AnonRateThrottle])
+def manager(request):
+    managers = Group.objects.get(name="Manager")
+    if request.method == "GET":
+        users = [user.username for user in User.objects.filter(groups=managers).all()]
+        return Response({"Managers": users})
+    
+    username = request.data["username"]
+    if username:
+        user = get_object_or_404(User, username=username)
+        if request.method == "POST":
+            managers.user_set.add(user)
+            user.is_staff = True
+            user.save()
+            return Response({"message": "Manager added successfully"}, status.HTTP_201_CREATED)
+        elif request.method == "DELETE":
+            managers.user_set.remove(user)
+            user.is_staff = False
+            user.save()
+            return Response({"message": "Manager removed successfully"}, status.HTTP_200_OK)
+    return Response({"message": "Invalid request"}, status.HTTP_400_BAD_REQUEST)
+
+
+def delivery_crew(request):
+    delivery_crews = Group.objects.get(name="DeliveryCrew")
+    if request.method == "GET":
+        users = [user.username for user in User.objects.filter(groups=delivery_crew).all()]
+        return Response({"Delivery Crews": users})
+    
+    username = request.data["username"]
+    if username:
+        user = get_object_or_404(User, username=username)
+        if request.method == "POST":
+            delivery_crews.user_set.add(user)
+            return Response({"message": "Delivery crew added successfully"}, status.HTTP_201_CREATED)
+        elif request.method == "DELETE":
+            delivery_crews.user_set.remove(user)
+            return Response({"message": "Delivery crew removed successfully"}, status.HTTP_200_OK)
+    return Response({"message": "Invalid request"}, status.HTTP_400_BAD_REQUEST)
