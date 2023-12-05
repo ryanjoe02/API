@@ -37,7 +37,7 @@ class MenuItemTestCase(APITestCase):
 
         item_id = self.item1.id
         update_data = {"title": "Item chnaged", "price": 20}
-        response = self.client.patch(reverse("menu-item", args=[item_id]), update_data)
+        response = self.client.patch(reverse("menuitem-detail", args=[item_id]), update_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         update_item = MenuItem.objects.get(id=item_id)
@@ -49,6 +49,6 @@ class MenuItemTestCase(APITestCase):
 
         item_id = self.item2.id
         update_data = {"title": "Item chnaged", "price": 20}
-        response = self.client.patch(reverse("menu-items", args=[item_id]), update_data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.client.patch(reverse("menuitem-detail", args=[item_id]), update_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
