@@ -1,4 +1,4 @@
-from django_filters.rest_framework import FilterSet
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
 from .models import MenuItem, Order
 
@@ -23,3 +23,8 @@ class OrderFilter(FilterSet):
             "total": ["gte", "lte"],
             "date": ["year__gte", "year__lte"],
         }
+
+
+class CustomDjangoFilterBackend(DjangoFilterBackend):
+    def to_html(self, request, queryset, view):
+        return None

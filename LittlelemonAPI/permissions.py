@@ -1,9 +1,9 @@
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework import permissions
 
 
-class FullDjangoModelPermissions(DjangoModelPermissions):
-    def __init__(self) -> None:
-        self.perms_map = {
-            "GET",
-            ["%(app_label)s.view_%(model_name)s"],
-        }
+class IsManagerUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return request.user.groups.filter(name="Manager").exists()
